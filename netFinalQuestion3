@@ -1,0 +1,99 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace FinalExamQ2f
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+    
+        protected override void OnPaint(PaintEventArgs paintEvent)
+        {
+            int roll;
+            int[] resultArray = new int[11];
+            Random die = new Random();
+            for (int i = 0; i < 1000000; i++)
+            {
+                roll = rollDice(die);
+                roll -= 2; //translating from roll number to array number
+                resultArray[roll] += 1; //Adds to correct spot (0 = 2, 1 = 3, etc...)
+            }
+
+            Graphics g = paintEvent.Graphics;
+            SolidBrush brush = new SolidBrush(Color.Green);
+            Pen pen = new Pen(Color.Black);
+
+            Size size = this.ClientSize;
+            int width = size.Width;
+            int height = size.Height;
+
+            double recHeight;
+            double recWidth = (width * 0.09);// basically 1/11
+
+            double x = 0;
+            double y;
+            for (int i = 0; i < 11; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    brush.Color = Color.Red;   
+                }
+                else//made it christmas themed because why not
+                {
+                    brush.Color = Color.Green;
+                }
+                if (i > 0)
+                {
+                    x += recWidth;
+                }
+                else
+                {
+                    x = 0;
+                }
+
+                //My math here checks out as far as I can tell
+                double ratio = (height / 1000000.0);//this should fill the screen to how I would want it
+                y = (ratio * resultArray[i]);
+                recHeight = (ratio * resultArray[i]);
+
+                float newY = Convert.ToInt32(y);
+                float newX = Convert.ToInt32(x);
+                int newW = Convert.ToInt32(recWidth);
+                int newH = Convert.ToInt32(recHeight);
+
+                g.FillRectangle(brush, newX, newY, newW, 1000);
+                //The graph is upside down for a reason I do not know
+            }
+        }
+        static int rollDice(Random die)
+        {
+            int die1;
+            int die2;
+            int roll;
+            die1 = die.Next(1, 7);
+            die2 = die.Next(1, 7);
+            roll = die1 + die2;
+            return roll;
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            Invalidate();
+        }
+    }
+}
